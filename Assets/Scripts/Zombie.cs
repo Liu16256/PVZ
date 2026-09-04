@@ -1,0 +1,158 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using UnityEngine;
+
+
+enum ZombieState
+{   
+    Move,
+    Eat,
+    Die,
+    Pause
+}
+
+
+
+public class Zombie : MonoBehaviour
+{   
+
+
+    ZombieState zombieState=ZombieState.Move;
+    private Rigidbody2D rgd;
+
+    public float moveSpeed = 2f;
+
+    private Animator anim;
+
+    public int atkValue = 30;
+    public float atkDuration = 2;
+    private float atkTimer = 0;
+
+    private Plant currentEatPlant;
+
+    public int HP = 100;
+    private int currentHP;
+
+    public GameObject zombieHeadPrefeb;
+
+    private bool haveHead = true;
+
+    void Start()
+    {
+        rgd = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        currentHP = HP;
+    }
+
+    void Update()
+    {
+        switch (zombieState)
+        {
+            case ZombieState.Move:
+                MoveUpdate();
+                break;
+            case ZombieState.Eat:
+                EatUpdate();
+                break;
+            case ZombieState.Die:
+                break;
+            default:
+                break;
+        }
+
+        
+    }
+
+    void MoveUpdate()
+    {
+        rgd.MovePosition(rgd.position + Vector2.left * moveSpeed * Time.deltaTime);
+    }
+
+    void EatUpdate()
+    {
+        atkTimer += Time.deltaTime;
+        if(atkTimer>atkDuration&&currentEatPlant!=null)
+        {
+            
+            currentEatPlant.TakeDamage(atkValue);
+            atkTimer = 0;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag=="Plant")
+        {
+            AudioManager.Instance.PlayClip(Config.eat);
+            anim.SetBool("IsAttacking", true);
+            TransitionToEat();
+            currentEatPlant =   collision.GetComponent<Plant>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Plant")
+        {
+            anim.SetBool("IsAttacking", false);
+            zombieState=ZombieState.Move;
+            currentEatPlant = null;
+        }
+        else if(collision.tag=="House")
+        {
+            GameManager.Instance.GameEndFail();
+        }
+    }
+    void TransitionToEat()
+    {
+        zombieState = ZombieState.Eat;
+        atkTimer = 0;
+
+    }
+
+    public void TranssitionToPause()
+    {
+        zombieState = ZombieState.Pause;
+        anim.enabled = false;
+        rgd.bodyType = RigidbodyType2D.Static;
+    }
+
+
+
+
+
+
+    public void TakeDamage(int damage)
+    {
+        if (currentHP <= 0) return;
+        this.currentHP -= damage;
+        if (currentHP<=0)
+        {
+            currentHP = -1;
+            Dead();
+        }
+   
+        float hpPercent = currentHP*1f / HP;
+        anim.SetFloat("HPPercent", hpPercent);
+        if (hpPercent < 0.5f&& haveHead)
+        {
+            haveHead = false;
+            GameObject go = GameObject.Instantiate(zombieHeadPrefeb, transform.position,Quaternion.identity);
+            Destroy(go,2);
+        }
+
+
+    }
+
+    private void Dead()
+    {
+        if (zombieState == ZombieState.Die) return;
+        zombieState = ZombieState.Die;
+        GetComponent<Collider2D>().enabled = false;
+
+        ZombieManager.Instance.RemoveZombie(this);
+
+        Destroy(this.gameObject, 2);
+    }
+}
