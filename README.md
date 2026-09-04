@@ -244,7 +244,7 @@ Assets/Scenes/
 
 即可运行。
 
-> 建议使用开发时使用的 Unity 版本打开项目，不同 Unity 版本之间可能存在资源或项目设置兼容问题。
+> 建议使用开发时使用的 Unity 版本打开项目，不同 Unity 版本之间可能存在资源UI位置偏移或项目设置兼容问题。
 
 ---
 
@@ -252,13 +252,6 @@ Assets/Scenes/
 
 后续会补充游戏截图。
 
-```markdown
-![游戏主界面]<img width="800" height="600" alt="titlescreen" src="https://github.com/user-attachments/assets/9d7d768d-374d-443c-b454-8883e7f01380" />
-
-
-![游戏场景]<img width="1400" height="600" alt="background1" src="https://github.com/user-attachments/assets/a54d980c-88da-4574-b30b-6cb08a1111fa" />
-
-```
 
 ## 后续计划
 
