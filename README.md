@@ -253,9 +253,11 @@ Assets/Scenes/
 后续会补充游戏截图。
 
 ```markdown
-![游戏主界面](Images/main-menu.png)
+![游戏主界面]<img width="800" height="600" alt="titlescreen" src="https://github.com/user-attachments/assets/9d7d768d-374d-443c-b454-8883e7f01380" />
 
-![游戏场景](Images/gameplay.png)
+
+![游戏场景]<img width="1400" height="600" alt="background1" src="https://github.com/user-attachments/assets/a54d980c-88da-4574-b30b-6cb08a1111fa" />
+
 ```
 
 ## 后续计划
